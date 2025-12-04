@@ -75,7 +75,7 @@ knitr::include_graphics("img/staff-employment.png")
 
 Let's start by loading the data used to create this plot.
 
-```{r load-data-staff, message = FALSE}
+```{r load-data-staff, message = FALSE, eval =TRUE, echo=TRUE}
 staff <- read_csv("data/instructional-staff.csv")
 ```
 
@@ -91,6 +91,8 @@ In other words, we will convert the data from wide format to long format.
 
 But before we do so, a thought exercise: *How many rows will the long-format data have?* It will have a row for each combination of year and faculty type.
 If there are 5 faculty types and 11 years of data, how many rows will we have?
+
+  Answer: The long format will have 55 rows Because there will be a modifier for each id. 
 
 We do the wide to long conversion using a new function: `pivot_longer()`.
 The animation below show how this function works, as well as its counterpart `pivot_wider()`.
@@ -143,17 +145,41 @@ We can fix this using the `group` aesthetic following.
 ```{r fig.width = 10, fig.fullwidth = TRUE}
 staff_long %>%
   ggplot(aes(x = year, y = value, group = faculty_type, color = faculty_type)) +
-  geom_line()
+  geom_line(linewidth = 1.1) +
+  labs(
+    title = "Trends in Instructional Staff Composition (1987–2021)",
+    x = "Year",
+    y = "Proportion of Instructional Staff",
+    color = "Faculty Category"
+  ) +
+  theme_minimal()
 ```
 
 1.  Include the line plot you made above in your report and make sure the figure width is large enough to make it legible.
-    Also fix the title, axis labels, and legend label.
+    Also fix the title, axis labels, and legend label.                         
 
 2.  Suppose the objective of this plot was to show that the proportion of part-time faculty have gone up over time compared to other instructional staff types.
     What changes would you propose making to this plot to tell this story and why.
+    
+  Answer: I would say this chart right now done a perfect job to compare the rising percentage of part time over year compare with others employment type. However, i think a bar plot also a good ideas to show the grow of part time job over the year with the x will be time, y is the percentage and facet of other employment type.
 
 3.  Implement the changes you proposed in the previous exercise.
 
+```{r}
+staff_long %>%
+  ggplot(aes(x = factor(year), y = value)) +
+  geom_col() +
+  facet_wrap(~ faculty_type) +
+  labs(
+    title = "Growth in Instructional Staff Composition Over Time",
+    x = "Year",
+    y = "Proportion of Faculty"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
 Knit, *commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards.*
 
 ## Fisheries
@@ -172,10 +198,14 @@ knitr::include_graphics("img/fisheries.png")
 
 4.  Can you help them make improve it? First, brainstorm how you would improve it. Then create the improved visualization and write up the changes/decisions you made as bullet points. It's ok if some of your improvements are aspirational, i.e. you don't know how to implement it, but you think it's a good idea.
 
+ Answer: First, i would change the pie chart to vertical bar chart to show the difference between the difference Aquaculture and Capture. I think this is a better way to show the difference between multiple fields. For the plot, i would choose the 
+
 Load the data.
 
-```{r load-data-fisheries, eval = FALSE}
+```{r load-data-fisheries}
 fisheries <- read_csv("data/fisheries.csv")
+
+fisheries
 ```
 
 5.  Create a new data visualisation for these data that implements the improvements you proposed in the previous exercise (or many of them as you can).
