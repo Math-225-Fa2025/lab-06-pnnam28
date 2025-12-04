@@ -165,7 +165,7 @@ staff_long %>%
 
 3.  Implement the changes you proposed in the previous exercise.
 
-```{r}
+```{r barplot_chart}
 staff_long %>%
   ggplot(aes(x = factor(year), y = value)) +
   geom_col() +
@@ -198,7 +198,17 @@ knitr::include_graphics("img/fisheries.png")
 
 4.  Can you help them make improve it? First, brainstorm how you would improve it. Then create the improved visualization and write up the changes/decisions you made as bullet points. It's ok if some of your improvements are aspirational, i.e. you don't know how to implement it, but you think it's a good idea.
 
- Answer: First, i would change the pie chart to vertical bar chart to show the difference between the difference Aquaculture and Capture. I think this is a better way to show the difference between multiple fields. For the plot, i would choose the 
+ Answer: First, i would change the pie chart to vertical bar chart to show the difference between the difference Aquaculture and Capture. I think this is a better way to show the difference between multiple fields. For the plot, i would choose the top 10 countries so that it will be more concentrate and clearer dataset. 
+ 
+ *Limited the plot to the top 10 countries by total fishery production to reduce clutter and make comparisons easier.
+
+ *Replaced the 3D pie charts with a stacked bar chart, which allows more accurate comparison of Capture vs. Aquaculture.
+
+ *Used horizontal bars (coord_flip()) so country names are readable.
+
+ *Kept a single common scale for production so the relative size of countries is clear.
+
+ *Used a simple, minimal theme and clear labels to improve readability and focus on the data.
 
 Load the data.
 
@@ -209,7 +219,33 @@ fisheries
 ```
 
 5.  Create a new data visualisation for these data that implements the improvements you proposed in the previous exercise (or many of them as you can).
+```{r remodel_and_pivotdataset}
+# 1. Create total production and keep only the top 10 countries
+fisheries_top10 <- fisheries %>%
+  mutate(total = capture + aquaculture) %>%
+  slice_max(total, n = 10)
 
+# 2. Pivot to long format just for those 10 (much cleaner)
+fisheries_long <- fisheries_top10 %>%
+  pivot_longer(
+    cols = c(capture, aquaculture),
+    names_to = "production_type",
+    values_to = "value"
+  )
+
+# 3. Stacked horizontal bar chart
+fisheries_long %>%
+  ggplot(aes(x = reorder(country, total), y = value, fill = production_type)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Top 10 Countries by Fishery Production (2016)",
+    x = "Country",
+    y = "Production (metric tons)",
+    fill = "Production Type"
+  ) +
+  theme_minimal(base_size = 13)
+```
 Knit, *commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards and review the md document on GitHub to make sure you're happy with the final state of your work.*
 
 # Wrapping up
